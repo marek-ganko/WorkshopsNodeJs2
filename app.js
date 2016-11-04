@@ -16,11 +16,11 @@
 
 'use strict';
 
-var express    = require('express'),
-  app          = express(),
-  watson       = require('watson-developer-cloud'),
-  extend       = require('util')._extend,
-  i18n         = require('i18next');
+var express = require('express'),
+  app = express(),
+  watson = require('watson-developer-cloud'),
+  extend = require('util')._extend,
+  i18n = require('i18next');
 
 //i18n settings
 require('./config/i18n')(app);
@@ -35,12 +35,33 @@ var personalityInsights = watson.personality_insights({
   password: '<password>'
 });
 
+var toneAnalyzer = watson.tone_analyzer({
+  password: 'z0UBr7jBNVXs',
+  username: '5859a6b7-9ea2-46c6-bbb2-9a4a4993200f',
+  version: 'v3',
+  version_date: '2016-05-19'
+});
+
+toneAnalyzer.tone({
+    text: 'Greetings from Watson Developer Cloud!'
+  },
+  function(err, tone) {
+    if (err)
+      console.log(err);
+    else
+      console.log(JSON.stringify(tone, null, 2));
+  });
+
 app.get('/', function(req, res) {
-  res.render('index', { ct: req._csrfToken });
+  res.render('index', {
+    ct: req._csrfToken
+  });
 });
 
 app.post('/api/profile', function(req, res, next) {
-  var parameters = extend(req.body, { acceptLanguage : i18n.lng() });
+  var parameters = extend(req.body, {
+    acceptLanguage: i18n.lng()
+  });
 
   personalityInsights.profile(parameters, function(err, profile) {
     if (err)
